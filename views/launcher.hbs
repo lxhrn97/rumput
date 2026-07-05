@@ -2,8 +2,8 @@
     <div class="row">
         <div class="col-12 col-md-6 col-lg-6 mb-2">
             <div class="input-group input-group-sm mb-3">
-                <button id="btn-dummy" class="btn btn-dark btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">Linkers</button>
+                <button id="btn-dummy" class="btn btn-dark btn-sm dropdown-toggle" type="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">Linkers</button>
                 <ul id="res" style="width: stretch;" class="dropdown-menu">
 
                 </ul>
@@ -11,8 +11,8 @@
                 <input id="query" type="text" placeholder="Type here and enter or click the search engines dropdown..."
                     class="form-control" aria-label="Text input with dropdown button" autocomplete="off" autofocus>
 
-                <button class="btn btn-dark btn-sm dropdown-toggle" type="button"
-                    data-bs-toggle="dropdown" aria-expanded="false">Global</button>
+                <button class="btn btn-dark btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">Global</button>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item" id="search-google" href="javascript:void(0);">Google</a></li>
                     <li><a class="dropdown-item" id="search-yahoo" href="javascript:void(0);">Yahoo!</a></li>
@@ -44,8 +44,7 @@
     {{#each launcher}}
     <div class="col-4 col-md-3 col-lg-1 dashboard-card" id="{{this.id}}" data-title="{{this.title}}"
         data-link="{{this.url}}" data-icon="{{this.icon}}" data-icon-color="{{this.iconColor}}"
-        data-icon-bg-color="{{this.iconBgColor}}" title="{{this.title}}" draggable="true"
-        ondragstart="dragstartHandler(event)" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+        data-icon-bg-color="{{this.iconBgColor}}" title="{{this.title}}">
         <a href="{{this.url}}" class="text-decoration-none">
             <div class="card text-center h-100 border-0 shadow-sm" style="background-color: {{this.iconBgColor}};">
                 <div class="card-body px-0">
@@ -198,10 +197,7 @@
             } else {
                 // Add new card
                 const newCard = $(`
-                    <div class="col-6 col-md-3 col-lg-2 dashboard-card" id="${id}" data-title="${title}" data-link="${link}" data-icon="${icon}" data-icon-color="${iconColor}" data-icon-bg-color="${iconBgColor}" title="${title}"
-                    draggable="true" ondragstart="dragstartHandler(event)"
-                    ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"
-                    >
+                    <div class="col-6 col-md-3 col-lg-2 dashboard-card" id="${id}" data-title="${title}" data-link="${link}" data-icon="${icon}" data-icon-color="${iconColor}" data-icon-bg-color="${iconBgColor}" title="${title}">
                         <a href="${link}" class="text-decoration-none">
                             <div class="card text-center h-100 border-0 shadow-sm" style="background-color: ${iconBgColor};">
                                 <div class="card-body">
@@ -261,6 +257,24 @@
             $currentCard.remove();
             $currentCard = null;
             await saveLinksToServer();
+        });
+
+        const dashboardGrid = document.getElementById("dashboardGrid");
+
+        new Sortable(dashboardGrid, {
+            animation: 200,
+            easing: "cubic-bezier(0.2,0,0,1)",
+
+            ghostClass: "drag-ghost",
+            chosenClass: "drag-chosen",
+            dragClass: "drag-dragging",
+
+            swapThreshold: 0.65,
+            invertSwap: true,
+
+            onEnd: async function () {
+                await saveLinksToServer();
+            }
         });
     });
 
@@ -352,67 +366,4 @@
                 console.error("Failed to save:", err);
             });
     }
-
-    function dragstartHandler(ev) {
-        ev.dataTransfer.setData("text", ev.currentTarget.id);
-    }
-
-    function dragoverHandler(ev) {
-        ev.preventDefault();
-    }
-
-    async function dropHandler(ev) {
-        ev.preventDefault();
-        const dashboardGrid = $("#dashboardGrid");
-        const draggedId = ev.dataTransfer.getData("text");
-        const draggedEl = $("#" + draggedId);
-
-        const targetId = ev.currentTarget.id;
-        const targetEl = $("#" + targetId);
-
-        if (draggedEl !== targetEl) {
-            draggedEl.insertBefore(targetEl);
-
-            await saveLinksToServer();
-        }
-    }
-
-    async function dropHandlerOld(ev) {
-        ev.preventDefault();
-        const draggedId = ev.dataTransfer.getData("text");
-        const draggedEl = $("#" + draggedId);
-
-        const targetId = ev.currentTarget.id;
-        const targetEl = $("#" + targetId);
-
-        if (draggedEl !== targetEl) {
-
-            /*
-            let temp = {
-                title: targetEl.attr("data-title"),
-                link: targetEl.attr("data-link"),
-                icon: targetEl.attr("data-icon"),
-            }
-
-            targetEl.attr("data-title", draggedEl.attr("data-title"));
-            targetEl.attr("data-link", draggedEl.attr("data-link"));
-            targetEl.attr("data-icon", draggedEl.attr("data-icon"));
-            targetEl.find("a").attr("href", draggedEl.attr("data-link"));
-            targetEl.find("i").text(draggedEl.attr("data-icon"));
-            targetEl.find("h6").text(draggedEl.attr("data-title"));
-
-            draggedEl.attr("data-title", temp.title);
-            draggedEl.attr("data-link", temp.link);
-            draggedEl.attr("data-icon", temp.icon);
-            draggedEl.find("a").attr("href", temp.link);
-            draggedEl.find("i").text(temp.icon);
-            draggedEl.find("h6").text(temp.title);
-            */
-
-
-            await saveLinksToServer();
-        }
-    }
-
-
 </script>

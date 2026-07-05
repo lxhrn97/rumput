@@ -8,6 +8,12 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-12">
+                <input type="text" class="form-control" id="searchBox" placeholder="Search player...">
+            </div>
+        </div>
+
         <hr>
 
         <div class="row g-4" id="dashboardGrid">
@@ -174,6 +180,24 @@
             //$currentCard = null;
 
             await saveVdEmbedsToServer()
+        });
+
+        //
+        let timer;
+
+        $('#searchBox').on('input', function () {
+            clearTimeout(timer);
+
+            timer = setTimeout(() => {
+                const keyword = $('#searchBox').val().toLowerCase().trim();
+
+                $('.dashboard-card-extras').each(function () {
+                    const text = `${$(this).data('title')}`
+                        .toLowerCase();
+
+                    $(this).toggleClass('d-none', !text.includes(keyword));
+                });
+            }, 200);
         });
     })
 
