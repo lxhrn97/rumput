@@ -1,6 +1,8 @@
-# Rumput
+# Rumput - Personal and Multi Purpose Web Dashboard.
 
-Personal and Multi Purpose Web Dashboard.
+**WARNING!**
+
+**Backup your Rumput data before upgrading to the newer version. We might change the data structure of your previous version of Rumput or delete the old data folder when the new version has been published.**
 
 ## TOC
 - [Rumput](#rumput)
