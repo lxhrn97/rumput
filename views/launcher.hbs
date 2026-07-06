@@ -264,6 +264,23 @@
         new Sortable(dashboardGrid, {
             animation: 200,
             easing: "cubic-bezier(0.2,0,0,1)",
+            swap: true,
+            swapClass: "swap-highlight",
+            swapThreshold: 0.65,
+            invertSwap: true,
+
+            ghostClass: "drag-ghost",
+            chosenClass: "drag-chosen",
+            dragClass: "drag-dragging",
+
+            onEnd: async () => {
+                await saveLinksToServer();
+            }
+        });
+        /*
+        new Sortable(dashboardGrid, {
+            animation: 200,
+            easing: "cubic-bezier(0.2,0,0,1)",
 
             ghostClass: "drag-ghost",
             chosenClass: "drag-chosen",
@@ -276,6 +293,7 @@
                 await saveLinksToServer();
             }
         });
+         */
     });
 
     //
