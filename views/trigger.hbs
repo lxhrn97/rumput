@@ -19,10 +19,11 @@
         <div class="row g-4" id="dashboardGrid">
             {{#each trigger}}
             <div class="col-12 col-md-6 col-lg-3 dashboard-card" id="{{this.id}}" data-title="{{this.title}}"
-                data-script="{{this.script}}">
-                <div class="card text-center h-100 border-0 shadow-sm bg-dark">
+                data-script="{{this.script}}" data-icon-color="{{this.iconColor}}"
+                data-icon-bg-color="{{this.iconBgColor}}" title="{{this.title}}">
+                <div class="card text-center h-100 border-0 shadow-sm" style="background-color: {{this.iconBgColor}};">
                     <div class="card-body">
-                        <h6 class="mt-3 text-light">{{this.title}}</h6>
+                        <h6 class="mt-3" style="color: {{this.iconColor}};white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{this.title}}</h6>
                     </div>
                 </div>
             </div>
@@ -51,6 +52,13 @@
                 <div class="mb-3">
                     <label class="form-label">Title</label>
                     <input type="text" class="form-control" id="titleInput" required>
+                </div>
+
+                <input type="hidden" id="iconColorInput" required>
+                <div class="mb-3">
+                    <label class="form-label">Background Color</label>
+                    <input type="text" class="form-control" id="iconBgColorInput" required>
+                    <small class="text-muted">Example: black, red, white, #ff00ff</small>
                 </div>
 
                 <div class="mb-3">
@@ -115,6 +123,8 @@
 
         $("#trigger-edit").click(function () {
             $("#titleInput").val($currentCard.attr("data-title"));
+            $("#iconColorInput").val($currentCard.attr("data-icon-color"));
+            $("#iconBgColorInput").val($currentCard.attr("data-icon-bg-color"));
             $("#scriptInput").val(decodeURIComponent($currentCard.attr("data-script")));
             $("#itemModal").modal("show");
         });
@@ -163,20 +173,24 @@
             console.log(id)
             const title = $("#titleInput").val();
             const script = $("#scriptInput").val();
+            const iconBgColor = $("#iconBgColorInput").val() ?? "#000000";
+            const iconColor = getContrastColor(iconBgColor);
             console.log(script)
 
             if ($currentCard) {
                 // Edit existing card.
                 //alert('sdsdfd ' + title)
                 $currentCard.attr("data-title", title);
+                $currentCard.attr("data-icon-color", iconColor);
+                $currentCard.attr("data-icon-bg-color", iconBgColor);
                 $currentCard.attr("data-script", encodeURIComponent(script));
             } else {
                 // Add new card
                 const newCard = $(`
-                    <div class="col-12 col-md-6 col-lg-3 dashboard-card" id="${id}" data-title="${title}" data-script="${encodeURIComponent(script)}">
-                        <div class="card text-center h-100 border-0 shadow-sm bg-dark">
+                    <div class="col-12 col-md-6 col-lg-3 dashboard-card" id="${id}" data-title="${title}" data-script="${encodeURIComponent(script)}" data-icon-color="${iconColor}" data-icon-bg-color="${iconBgColor}" title="${title}">
+                        <div class="card text-center h-100 border-0 shadow-sm" style="background-color: ${iconBgColor};">
                             <div class="card-body">
-                                <h6 class="mt-3 text-light">${title}</h6>
+                                <h6 class="mt-3" style="color: ${iconColor};white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">${title}</h6>
                             </div>
                         </div>
                     </div>
@@ -230,6 +244,25 @@ copyText()`;
         });
     })
 
+    function getContrastColor(color) {
+        // Buat elemen sementara
+        const temp = document.createElement("div");
+        temp.style.color = color;
+        document.body.appendChild(temp);
+
+        // Browser mengubah nama warna menjadi rgb(...)
+        const rgb = getComputedStyle(temp).color;
+        document.body.removeChild(temp);
+
+        // Ambil nilai RGB
+        const [r, g, b] = rgb.match(/\d+/g).map(Number);
+
+        // Hitung luminance
+        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+
+        return luminance > 186 ? "black" : "white";
+    }
+
     async function saveTriggersToServer() {
         const trigger = [];
         let countedId = 0;
@@ -239,7 +272,9 @@ copyText()`;
             trigger.push({
                 id: countedId.toString(),
                 title: $(this).data("title").toString(),
-                script: $(this).data("script")
+                script: $(this).data("script"),
+                iconColor: $(this).data("icon-color"),
+                iconBgColor: $(this).data("icon-bg-color")
             });
             ++countedId;
         });

@@ -52,7 +52,7 @@
 
         function doSearch() {
             const query = $("#query").val();
-            fetch(`/linkers/search?q=${query}`, {
+            fetch(`/linkers/search?q=${query}&max=30`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             })

@@ -15,6 +15,8 @@ router.get('/', (req, res) => {
             readyTrigger.push({
                 id: item.id,
                 title: item.title,
+                iconColor: item.iconColor,
+                iconBgColor: item.iconBgColor,
                 script: encodeURIComponent(item.script)
             })
         });
@@ -41,6 +43,8 @@ router.post("/save", (req, res) => {
         readyTrigger.push({
             id: item.id,
             title: item.title,
+            iconColor: item.iconColor,
+            iconBgColor: item.iconBgColor,
             script: decodeURIComponent(item.script)
         })
     });

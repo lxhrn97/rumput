@@ -3,6 +3,8 @@ import fs from 'fs';
 
 const router = express.Router();
 
+
+
 router.get('/', (req, res) => {
     let note;
     let readyNote = [];
@@ -15,6 +17,8 @@ router.get('/', (req, res) => {
             readyNote.push({
                 id: item.id,
                 title: item.title,
+                iconColor: item.iconColor,
+                iconBgColor: item.iconBgColor,
                 note: encodeURIComponent(item.note)
             })
         });
@@ -41,6 +45,8 @@ router.post("/save", (req, res) => {
         readyNote.push({
             id: item.id,
             title: item.title,
+            iconColor: item.iconColor,
+            iconBgColor: item.iconBgColor,
             note: decodeURIComponent(item.note)
         })
     });
