@@ -75,6 +75,48 @@ router.post("/default-af/save", (req, res) => {
     res.json({ message: "Berhasil disimpan" });
 });
 
+router.get("/backup-launcher", (req, res) => {
+    // Define the absolute path to your file
+    const filePath = global.launcherPath;
+
+    download(filePath, req, res);
+});
+
+router.get("/backup-bookmark", (req, res) => {
+    // Define the absolute path to your file
+    const filePath = global.bookmarkPath;
+
+    download(filePath, req, res);
+});
+
+router.get("/backup-index", (req, res) => {
+    // Define the absolute path to your file
+    const filePath = global.indexPath;
+
+    download(filePath, req, res);
+});
+
+router.get("/backup-note", (req, res) => {
+    // Define the absolute path to your file
+    const filePath = global.notePath;
+
+    download(filePath, req, res);
+});
+
+router.get("/backup-trigger", (req, res) => {
+    // Define the absolute path to your file
+    const filePath = global.triggerPath;
+
+    download(filePath, req, res);
+});
+
+router.get("/backup-video", (req, res) => {
+    // Define the absolute path to your file
+    const filePath = global.vdEmbedPath;
+
+    download(filePath, req, res);
+});
+
 router.delete("/clear-launcher", (req, res) => {
     fs.truncate(global.launcherPath, 0, (err) => {
         if (err) throw err;
@@ -181,4 +223,22 @@ router.get("/progress-check", (req, res) => {
 
     res.json(ret);
 });
+
+function download(filePath, req, res){
+    res.download(filePath, undefined, (err) => {
+        if (err) {
+            if (!res.headersSent) {
+                if (err.code === "ENOENT") {
+                    return res.status(404).json({
+                        error: "File tidak ditemukan"
+                    });
+                }
+
+                return res.status(500).json({
+                    error: "Gagal mendownload file"
+                });
+            }
+        }
+    });
+}
 export default router;

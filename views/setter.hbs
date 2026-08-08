@@ -51,6 +51,34 @@
             </div>
         </form>
         <hr class="px-2">
+        <h5>Backup Rumput Data</h5>
+        <ul class="sidebar-ul">
+            <li class="sidebar-li">
+                <button id="ba-launcher" class="btn btn-success btn-sm w-100">Backup All Launchers</button>
+            </li>
+
+            <li class="sidebar-li">
+                <button id="ba-bookmark" class="btn btn-success btn-sm w-100">Backup All Linkers Bookmarks</button>
+            </li>
+
+            <li class="sidebar-li">
+                <button id="ba-index" class="btn btn-success btn-sm w-100">Backup All Linkers Indexes</button>
+            </li>
+
+            <li class="sidebar-li">
+                <button id="ba-note" class="btn btn-success btn-sm w-100">Backup All Keepers</button>
+            </li>
+
+            <li class="sidebar-li">
+                <button id="ba-trigger" class="btn btn-success btn-sm w-100">Backup All Triggers</button>
+            </li>
+
+            <li class="sidebar-li">
+                <button id="ba-video" class="btn btn-success btn-sm w-100">Backup All Players</button>
+            </li>
+        </ul>
+        <!-- -->
+        <hr class="px-2">
         <h5>Danger Zone</h5>
         <ul class="sidebar-ul">
             <li class="sidebar-li">
@@ -83,6 +111,7 @@
         <h4 class="text-danger">WARNING!</h4>
         <p>Those red buttons at Danger Zone will delete your Rumput data permanently. Don't click them unless you know
             what you are doing.</p>
+        <p>Make sure to backup the data frequently using the green buttons below.</p>
     </div>
 </div>
 
@@ -90,7 +119,29 @@
     let defaultSearchEngine = {};
     let defaultAutofocus = {}
     $(document).ready(function () {
+        $("#ba-launcher").click(function () {
+            window.location.href = "/setters/backup-launcher";
+        });
 
+        $("#ba-bookmark").click(function () {
+            window.location.href = "/setters/backup-bookmark";
+        });
+
+        $("#ba-index").click(function () {
+            window.location.href = "/setters/backup-index";
+        });
+
+        $("#ba-note").click(function () {
+            window.location.href = "/setters/backup-note";
+        });
+
+        $("#ba-trigger").click(function () {
+            window.location.href = "/setters/backup-trigger";
+        });
+
+        $("#ba-video").click(function () {
+            window.location.href = "/setters/backup-video";
+        });
 
         $("#da-launcher").click(function () {
             if (confirm("WARNING! Your launcher links will be removed.")) {
