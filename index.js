@@ -14,6 +14,7 @@ const __dirname = import.meta.dirname;
 global.dirname = __dirname;
 global.uploadDir = path.join(__dirname, "uploads");
 global.resultDir = path.join(__dirname, "data");
+global.outputDir = path.join(__dirname, "output");
 global.launcherPath = path.join(global.resultDir, "launcher.json");
 global.triggerPath = path.join(global.resultDir, "trigger.json");
 global.vdEmbedPath = path.join(global.resultDir, "vd-embed.json");

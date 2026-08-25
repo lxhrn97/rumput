@@ -111,6 +111,10 @@ These screenshots show you how to do this.
 
 **It's not recommended to use force autofocus if you set rumput as homepage without giving permission to allow popup. Your browser will close instantly after being launched and it's really complicated to fix.**
 
+Before:
+
 ![before](./.screenshots/before.png "Before disabling pop up blocker in Brave")
+
+After:
 
 ![after](./.screenshots/after.png "After disabling pop up blocker in Brave")

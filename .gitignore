@@ -47,6 +47,7 @@ data-mount-2026.06.28-0331/*.json
 data-mount-2026.06.30-0604/*.json
 data-mount-2026.07.06-0303/*.json
 uploads/*.html
+uploads/*.zip
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/

@@ -7,13 +7,20 @@
                 Choose a Default Search Engine
             </button>
             <ul id="se" class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
-                <li><a class="dropdown-item dropdown-se" href="javascript:void(0);" data-value="search-google">Google</a></li>
-                <li><a class="dropdown-item dropdown-se" href="javascript:void(0);" data-value="search-yahoo">Yahoo!</a></li>
-                <li><a class="dropdown-item dropdown-se" href="javascript:void(0);" data-value="search-ddg">DuckDuckGo</a></li>
-                <li><a class="dropdown-item dropdown-se" href="javascript:void(0);" data-value="search-bing">Bing</a></li>
-                <li><a class="dropdown-item dropdown-se" href="javascript:void(0);" data-value="search-brave">Brave</a></li>
-                <li><a class="dropdown-item dropdown-se" href="javascript:void(0);" data-value="search-marginalia">Marginalia</a></li>
-                <li><a class="dropdown-item dropdown-se" href="javascript:void(0);" data-value="search-contextq">ContextQuery</a></li>
+                <li><a class="dropdown-item dropdown-se" href="javascript:void(0);"
+                        data-value="search-google">Google</a></li>
+                <li><a class="dropdown-item dropdown-se" href="javascript:void(0);" data-value="search-yahoo">Yahoo!</a>
+                </li>
+                <li><a class="dropdown-item dropdown-se" href="javascript:void(0);"
+                        data-value="search-ddg">DuckDuckGo</a></li>
+                <li><a class="dropdown-item dropdown-se" href="javascript:void(0);" data-value="search-bing">Bing</a>
+                </li>
+                <li><a class="dropdown-item dropdown-se" href="javascript:void(0);" data-value="search-brave">Brave</a>
+                </li>
+                <li><a class="dropdown-item dropdown-se" href="javascript:void(0);"
+                        data-value="search-marginalia">Marginalia</a></li>
+                <li><a class="dropdown-item dropdown-se" href="javascript:void(0);"
+                        data-value="search-contextq">ContextQuery</a></li>
             </ul>
         </div>
         <hr class="px-2">
@@ -25,8 +32,10 @@
                 Choose Autofocus Behavior
             </button>
             <ul id="af" class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item dropdown-af" href="javascript:void(0);" data-value="autofocus-force-yes">Force Autofocus</a></li>
-                <li><a class="dropdown-item dropdown-af" href="javascript:void(0);" data-value="autofocus-force-no">Don't Force Autofocus</a></li>
+                <li><a class="dropdown-item dropdown-af" href="javascript:void(0);"
+                        data-value="autofocus-force-yes">Force Autofocus</a></li>
+                <li><a class="dropdown-item dropdown-af" href="javascript:void(0);"
+                        data-value="autofocus-force-no">Don't Force Autofocus</a></li>
             </ul>
         </div>
         <hr class="px-2">
@@ -54,28 +63,22 @@
         <h5>Backup Rumput Data</h5>
         <ul class="sidebar-ul">
             <li class="sidebar-li">
-                <button id="ba-launcher" class="btn btn-success btn-sm w-100">Backup All Launchers</button>
+                <button id="ba-backup" class="btn btn-success btn-sm w-100">Backup Rumput Data</button>
             </li>
 
+            <!--
             <li class="sidebar-li">
-                <button id="ba-bookmark" class="btn btn-success btn-sm w-100">Backup All Linkers Bookmarks</button>
+                <button id="ba-restore" class="btn btn-success btn-sm w-100">Restore Rumput Data</button>
             </li>
+            -->
+        </ul>
+        <hr class="px-2">
+        <h5>Restore Rumput Data</h5>
+        <ul class="sidebar-ul">
+            <input class="form-control form-control file-input" type="file" id="backupFile" accept=".zip">
+            <button class="btn btn-success btn-sm w-100" id="restoreButton">Restore Rumput Data</button>
 
-            <li class="sidebar-li">
-                <button id="ba-index" class="btn btn-success btn-sm w-100">Backup All Linkers Indexes</button>
-            </li>
-
-            <li class="sidebar-li">
-                <button id="ba-note" class="btn btn-success btn-sm w-100">Backup All Keepers</button>
-            </li>
-
-            <li class="sidebar-li">
-                <button id="ba-trigger" class="btn btn-success btn-sm w-100">Backup All Triggers</button>
-            </li>
-
-            <li class="sidebar-li">
-                <button id="ba-video" class="btn btn-success btn-sm w-100">Backup All Players</button>
-            </li>
+            <div id="status"></div>
         </ul>
         <!-- -->
         <hr class="px-2">
@@ -119,28 +122,12 @@
     let defaultSearchEngine = {};
     let defaultAutofocus = {}
     $(document).ready(function () {
-        $("#ba-launcher").click(function () {
-            window.location.href = "/setters/backup-launcher";
+        $("#ba-backup").click(function () {
+            window.location.href = "/setters/backup-backup";
         });
 
-        $("#ba-bookmark").click(function () {
-            window.location.href = "/setters/backup-bookmark";
-        });
+        $("#ba-restore").click(function () {
 
-        $("#ba-index").click(function () {
-            window.location.href = "/setters/backup-index";
-        });
-
-        $("#ba-note").click(function () {
-            window.location.href = "/setters/backup-note";
-        });
-
-        $("#ba-trigger").click(function () {
-            window.location.href = "/setters/backup-trigger";
-        });
-
-        $("#ba-video").click(function () {
-            window.location.href = "/setters/backup-video";
         });
 
         $("#da-launcher").click(function () {
@@ -280,7 +267,7 @@
         });
 
         //
-        
+
         markAFActive("{{ defaultAF }}")
         console.log("{{ defaultAF }}")
         $(".dropdown-af").on("click", async function (e) {
@@ -299,6 +286,56 @@
             markAFActive(selected);
         });
 
+        // restore backup
+        const backupFile = document.getElementById("backupFile");
+        const restoreButton = document.getElementById("restoreButton");
+        const status = document.getElementById("status");
+
+        $("#restoreButton").click(async function (e) {
+            //alert();
+            if (!backupFile.files.length) {
+                status.textContent = "Choose zip first.";
+                return;
+            }
+
+            const file = backupFile.files[0];
+
+            if (!file.name.toLowerCase().endsWith(".zip")) {
+                status.textContent = "File must be a ZIP.";
+                return;
+            }
+
+            const formData = new FormData();
+
+            formData.append("file", file);
+
+            status.textContent = "Uploading to restore...";
+            restoreButton.disabled = true;
+
+            try {
+                const response = await fetch("/setters/backup-restore", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || "Restore failed");
+                }
+
+                status.textContent = result.message;
+
+            } catch (error) {
+                console.error(error);
+                status.textContent = error.message;
+
+            } finally {
+                restoreButton.disabled = false;
+            }
+        });
+
+        // bookmark
         $("#formFile").on("change", function (event) {
             $("#links").val("");
 

@@ -12,6 +12,8 @@
   "author": "rakifsul",
   "private": true,
   "dependencies": {
+    "adm-zip": "^0.6.0",
+    "archiver": "^8.0.0",
     "bcryptjs": "^3.0.3",
     "cheerio": "^1.1.2",
     "express": "^5.1.0",

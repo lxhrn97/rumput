@@ -1,18 +1,31 @@
 import express from "express";
 import path from 'path';
 import multer from 'multer';
+import { ZipArchive } from "archiver";
+import AdmZip from "adm-zip";
 import fs from 'fs';
 import { Worker } from "worker_threads";
 
 const router = express.Router();
 
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, global.uploadDir);
+//     },
+//     filename: (req, file, cb) => {
+//         // nama file tetap
+//         cb(null, "bookmark-processing.html");
+//     }
+// });
+// const upload = multer({ storage });
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, global.uploadDir);
     },
+
     filename: (req, file, cb) => {
-        // nama file tetap
-        cb(null, "bookmark-processing.html");
+        cb(null, "bookmark-processing.zip");
     }
 });
 const upload = multer({ storage });
@@ -75,46 +88,64 @@ router.post("/default-af/save", (req, res) => {
     res.json({ message: "Berhasil disimpan" });
 });
 
-router.get("/backup-launcher", (req, res) => {
-    // Define the absolute path to your file
-    const filePath = global.launcherPath;
+router.get("/backup-backup", (req, res) => {
+    const sourceDir = global.resultDir;
 
-    download(filePath, req, res);
+    res.attachment("rumput-data.zip");
+
+    const archive = new ZipArchive({
+        zlib: { level: 9 }
+    });
+
+    archive.on("error", (err) => {
+        console.error("Archive error:", err);
+
+        if (!res.headersSent) {
+            res.status(500).send("Gagal membuat ZIP");
+        } else {
+            res.end();
+        }
+    });
+
+    archive.pipe(res);
+
+    archive.directory(sourceDir, false);
+
+    archive.finalize();
 });
 
-router.get("/backup-bookmark", (req, res) => {
-    // Define the absolute path to your file
-    const filePath = global.bookmarkPath;
+router.post("/backup-restore", upload.single("file"),  (req, res) => {
+    const zipFile = path.join(global.uploadDir, "bookmark-processing.zip")
+    //const zipFile = req.file.path;
+    const destinationDir = global.resultDir;
 
-    download(filePath, req, res);
-});
+    try {
+        if (!fs.existsSync(zipFile)) {
+            return res.status(404).json({
+                error: "rumput-data.zip tidak ditemukan"
+            });
+        }
 
-router.get("/backup-index", (req, res) => {
-    // Define the absolute path to your file
-    const filePath = global.indexPath;
+        fs.mkdirSync(destinationDir, {
+            recursive: true
+        });
 
-    download(filePath, req, res);
-});
+        const zip = new AdmZip(zipFile);
 
-router.get("/backup-note", (req, res) => {
-    // Define the absolute path to your file
-    const filePath = global.notePath;
+        zip.extractAllTo(destinationDir, true);
 
-    download(filePath, req, res);
-});
+        res.json({
+            success: true,
+            message: "Backup berhasil di-restore"
+        });
 
-router.get("/backup-trigger", (req, res) => {
-    // Define the absolute path to your file
-    const filePath = global.triggerPath;
+    } catch (err) {
+        console.error("Extract error:", err);
 
-    download(filePath, req, res);
-});
-
-router.get("/backup-video", (req, res) => {
-    // Define the absolute path to your file
-    const filePath = global.vdEmbedPath;
-
-    download(filePath, req, res);
+        res.status(500).json({
+            error: "Gagal melakukan restore backup"
+        });
+    }
 });
 
 router.delete("/clear-launcher", (req, res) => {
@@ -166,7 +197,7 @@ router.delete("/clear-note", (req, res) => {
 });
 
 router.post("/upload-bookmark", upload.single("file"), (req, res) => {
-    processingFilePath = path.join(global.uploadDir, "bookmark-processing.html");
+    processingFilePath = path.join(global.uploadDir, "bookmark-processing.zip");
     progressMap = { current: 0, total: 0, percent: 0, done: false };
     res.json({ message: "Upload success", processingFilePath });
 });
@@ -224,21 +255,4 @@ router.get("/progress-check", (req, res) => {
     res.json(ret);
 });
 
-function download(filePath, req, res){
-    res.download(filePath, undefined, (err) => {
-        if (err) {
-            if (!res.headersSent) {
-                if (err.code === "ENOENT") {
-                    return res.status(404).json({
-                        error: "File tidak ditemukan"
-                    });
-                }
-
-                return res.status(500).json({
-                    error: "Gagal mendownload file"
-                });
-            }
-        }
-    });
-}
 export default router;

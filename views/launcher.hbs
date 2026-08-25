@@ -8,8 +8,8 @@
 
                 </ul>
 
-                <input id="query" type="text" placeholder="Type here to search..."
-                    class="form-control" aria-label="Text input with dropdown button" autocomplete="off" autofocus>
+                <input id="query" type="text" placeholder="Type here to search..." class="form-control"
+                    aria-label="Text input with dropdown button" autocomplete="off" autofocus>
 
                 <button class="btn btn-dark btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
                     aria-expanded="false">Global</button>
@@ -44,7 +44,7 @@
     {{#each launcher}}
     <div class="col-4 col-md-3 col-lg-1 dashboard-card" id="{{this.id}}" data-title="{{this.title}}"
         data-link="{{this.url}}" data-icon="{{this.icon}}" data-icon-color="{{this.iconColor}}"
-        data-icon-bg-color="{{this.iconBgColor}}" title="{{this.title}}">
+        data-icon-bg-color="{{this.iconBgColor}}" data-toggle="tooltip" title="{{this.title}}">
         <a href="{{this.url}}" class="text-decoration-none">
             <div class="card text-center h-100 border-0 shadow-sm" style="background-color: {{this.iconBgColor}};">
                 <div class="card-body px-0">
@@ -89,10 +89,11 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Alias Background Color</label>
-                    
+
                     <div class="input-group input-group-sm">
                         <input type="text" class="form-control" id="iconBgColorInput" required>
-                        <button type="button" class="btn btn-warning btn-small" id="make-contrast">Make Text Color Contrast</button>
+                        <button type="button" class="btn btn-warning btn-small" id="make-contrast">Make Text Color
+                            Contrast</button>
                     </div>
                     <small class="text-muted">Example: black, red, white, #ff00ff</small>
                 </div>
@@ -117,6 +118,12 @@
 
 <script>
     $(document).ready(function () {
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip({
+                delay: { show: 0, hide: 50 } // 0ms to show instantly
+            })
+        })
+
         $("#make-contrast").click(function () {
             $("#iconColorInput").val(getContrastColor($("#iconBgColorInput").val()));
         })
